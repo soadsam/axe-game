@@ -1,0 +1,9 @@
+# Build outputs
+*.exe
+*.dll
+*.dsym
+main
+
+# IDE/editor files
+.vscode/
+*.code-workspace
