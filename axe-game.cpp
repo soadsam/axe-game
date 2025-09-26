@@ -12,6 +12,8 @@ int main()
   int radius{50};
   int circleRight{circleX + radius};
   int circleLeft{circleX - radius};
+  int circleTop{circleY - radius};
+  int circleBottom{circleY + radius};
 
   // Rectangle position
   int rectX{400};
@@ -29,53 +31,55 @@ int main()
   {
     BeginDrawing();
 
-    if ((circleRight >= rectLeft && circleLeft <= rectRight) && (circleY + radius >= rectY && circleY - radius <= rectY + 50))
+    if ((circleRight >= rectLeft && circleLeft <= rectRight) && (circleTop <= rectBottom && circleBottom >= rectTop))
     {
-      circleColor = GREEN;
-      rectColor = GREEN;
+      DrawText("GAME OVER", 400, 200, 20, RED);
     }
     else
     {
-      circleColor = RED;
-      rectColor = RED;
+      circleColor = GREEN;
+      rectColor = GREEN;
+      DrawCircle(circleX, circleY, radius, circleColor);
+      DrawRectangle(rectX, rectY, 50, 50, rectColor);
+
+      rectY += direction;
+      rectTop = rectY;
+      rectBottom = rectY + 50;
+
+      if (rectY > height - 50 || rectY < 0)
+      {
+        direction = direction * -1;
+      }
+
+      if (IsKeyDown(KEY_D) && circleX < width - 50)
+      {
+        circleX += 5;
+      }
+
+      if (IsKeyDown(KEY_W) && circleY > 50)
+      {
+        circleY -= 5;
+      }
+
+      if (IsKeyDown(KEY_S) && circleY < height - 50)
+      {
+        circleY += 5;
+      }
+
+      if (IsKeyDown(KEY_A) && circleX > 50)
+      {
+        circleX -= 5;
+      }
+
+      circleRight = circleX + radius;
+      circleLeft = circleX - radius;
+      circleTop = circleY - radius;
+      circleBottom = circleY + radius;
+
+      printf("rectY: %i\n", rectY);
+      printf(" circleTop: %i\n", circleTop);
+      printf(" circleBottom: %i\n", circleBottom);
     }
-
-    DrawCircle(circleX, circleY, radius, circleColor);
-    DrawRectangle(rectX, rectY, 50, 50, rectColor);
-
-    rectY += direction;
-
-    if (rectY > height - 50 || rectY < 0)
-    {
-      direction = direction * -1;
-    }
-
-    if (IsKeyDown(KEY_D) && circleX < width - 50)
-    {
-      circleX += 5;
-    }
-
-    if (IsKeyDown(KEY_W) && circleY > 50)
-    {
-      circleY -= 5;
-    }
-
-    if (IsKeyDown(KEY_S) && circleY < height - 50)
-    {
-      circleY += 5;
-    }
-
-    if (IsKeyDown(KEY_A) && circleX > 50)
-    {
-      circleX -= 5;
-    }
-
-    circleRight = circleX + radius;
-    circleLeft = circleX - radius;
-
-    printf("rectX: %i", rectX);
-    printf(" circleRight: %i\n", circleRight);
-
     ClearBackground(WHITE);
     EndDrawing();
   }
