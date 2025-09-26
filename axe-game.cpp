@@ -26,10 +26,42 @@ int main()
   Color circleColor{RED};
   Color rectColor{RED};
 
+  int score{0};
+  bool reachedLeftEdge{false};
+  bool reachedRightEdge{false};
+  const int buttonWidth{140};
+  const int buttonHeight{40};
+  const int buttonMargin{20};
+
   SetTargetFPS(60);
   while (!WindowShouldClose())
   {
     BeginDrawing();
+    ClearBackground(WHITE);
+
+    Rectangle resetButton{static_cast<float>(width - buttonMargin - buttonWidth),
+                          static_cast<float>(buttonMargin),
+                          static_cast<float>(buttonWidth),
+                          static_cast<float>(buttonHeight)};
+    Vector2 mousePosition = GetMousePosition();
+    bool isHoveringButton = CheckCollisionPointRec(mousePosition, resetButton);
+    Color buttonColor = isHoveringButton ? LIGHTGRAY : GRAY;
+    DrawRectangleRec(resetButton, buttonColor);
+    DrawRectangleLinesEx(resetButton, 2, DARKGRAY);
+    const char *buttonLabel = "Reset";
+    int textWidth = MeasureText(buttonLabel, 20);
+    DrawText(buttonLabel,
+             resetButton.x + (resetButton.width - textWidth) / 2,
+             resetButton.y + (resetButton.height - 20) / 2,
+             20,
+             BLACK);
+
+    if (isHoveringButton && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+      score = 0;
+      reachedLeftEdge = false;
+      reachedRightEdge = false;
+    }
 
     if ((circleRight >= rectLeft && circleLeft <= rectRight) && (circleTop <= rectBottom && circleBottom >= rectTop))
     {
@@ -76,11 +108,37 @@ int main()
       circleTop = circleY - radius;
       circleBottom = circleY + radius;
 
+      bool atLeftEdge = circleLeft <= 0;
+      bool atRightEdge = circleRight >= width;
+
+      if (atLeftEdge && !reachedLeftEdge)
+      {
+        score++;
+        reachedLeftEdge = true;
+      }
+      else if (!atLeftEdge)
+      {
+        reachedLeftEdge = false;
+      }
+
+      if (atRightEdge && !reachedRightEdge)
+      {
+        score++;
+        reachedRightEdge = true;
+      }
+      else if (!atRightEdge)
+      {
+        reachedRightEdge = false;
+      }
+
       printf("rectY: %i\n", rectY);
       printf(" circleTop: %i\n", circleTop);
       printf(" circleBottom: %i\n", circleBottom);
     }
-    ClearBackground(WHITE);
+
+    const char *scoreText = TextFormat("Score: %i", score);
+    DrawText(scoreText, buttonMargin, buttonMargin, 30, BLACK);
+
     EndDrawing();
   }
 }
